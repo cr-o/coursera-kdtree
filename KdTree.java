@@ -7,8 +7,8 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
-public class KdTree {
-    public PointSET(){ // construct an empty set of points
+public class KdTree { // set of points in unit square, implemented using 2d-tree
+    public KdTree(){ // construct an empty set of points
 
     }
     public boolean isEmpty(){ // is the set empty?
@@ -33,6 +33,10 @@ public class KdTree {
 
     }
     public static void main(String[] args){ // unit testing of the methods (optional)
-
+    /*
+     * KdTreeGenerator
+     * KdTreeVisualizer
+     * NearestNeighborVisualizer
+     */
     }
 }
