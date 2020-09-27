@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree { // set of points in unit square, implemented using 2d-tree; a generalization of a BST to two-dimensional keys
     private static class Node {
@@ -57,14 +58,16 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             if (isVertical) {
                 if (isLess) { // on bottom
                     add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.rect.xmax(), parent.pt.y());
-                } else { // on top
+                }
+                else { // on top
                     add.rect = new RectHV(parent.rect.xmin(), parent.pt.y(), parent.rect.xmax(), parent.rect.xmax());
                 }
             }
             else {
                 if (isLess) { // on left
                     add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.pt.x(), parent.rect.ymax());
-                } else { // on right
+                }
+                else { // on right
                     add.rect = new RectHV(parent.pt.x(), parent.rect.ymin(), parent.rect.xmax(), parent.rect.ymax());
                 }
             }
@@ -117,7 +120,8 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             }
             else if (curr.pt.x() > add.pt.x()) {
                 inRight = containsBST(curr.greaterNode, add, false);
-            } else {
+            }
+            else {
                 return true;
             }
         }
@@ -127,7 +131,8 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             }
             else if (curr.pt.y() < add.pt.y()) {
                 inRight = containsBST(curr.greaterNode, add, true);
-            } else {
+            }
+            else {
                 return true;
             }
         }
@@ -135,10 +140,45 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     public void draw() { // draw all points to standard draw
+        draw(root, true);
+    }
+
+    public Node draw(Node currNode, boolean isVertical) {
         // Step 4
         // test rectangles
-
-        // black points, red vertical, blue horizontal
+        if (currNode == null) {
+            throw new IllegalArgumentException("Current node cannot be null");
+        }
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        currNode.pt.draw();
+        if (isVertical) {
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.setPenRadius();
+            Point2D start = new Point2D(currNode.pt.x(), currNode.rect.ymin());
+            Point2D end = new Point2D(currNode.pt.x(), currNode.rect.ymax());
+            start.drawTo(end);
+            if (currNode.lessNode != null) {
+                currNode.lessNode = draw(currNode.lessNode, false);
+            }
+            if (currNode.greaterNode != null) {
+                currNode.greaterNode = draw(currNode.greaterNode, false);
+            }
+        }
+        else {
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.setPenRadius();
+            Point2D start = new Point2D(currNode.rect.xmin(), currNode.pt.y());
+            Point2D end = new Point2D(currNode.rect.xmax(), currNode.pt.y());
+            start.drawTo(end);
+            if (currNode.lessNode != null) {
+                currNode.lessNode = draw(currNode.lessNode, false);
+            }
+            if (currNode.greaterNode != null) {
+                currNode.greaterNode = draw(currNode.greaterNode, false);
+            }
+        }
+        return currNode;
     }
 
     public Iterable<Point2D> range(RectHV rect) { // all points that are inside the rectangle (or on the boundary)
