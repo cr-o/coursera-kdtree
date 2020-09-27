@@ -2,7 +2,7 @@
   <code_scheme name="Project" version="173">
     <option name="LINE_SEPARATOR" value="&#10;" />
     <option name="RIGHT_MARGIN" value="400" />
-    <option name="SOFT_MARGINS" value="400" />
+    <option name="SOFT_MARGINS" value="80,120" />
     <JavaCodeStyleSettings>
       <option name="INSERT_OVERRIDE_ANNOTATION" value="false" />
       <option name="ANNOTATION_PARAMETER_WRAP" value="1" />

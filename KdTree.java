@@ -38,35 +38,53 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (contains(p)) {
             return;
         }
-        Node newNode = root.pt == null ? root : new Node();
-        newNode.pt = p;
-
-        if (treeSize == 0) {
-            insertBST(root, newNode, true);
+        if (root.pt == null) {
+            root.pt = p;
+            root.rect = new RectHV(0.0, 0.0, 1.0, 1.0);
+        }
+        else {
+            Node newNode = new Node();
+            newNode.pt = p;
+            insertBST(root, newNode, null, true, false);
         }
         treeSize += 1;
-        // Step 3
-        // set up RectHV for each node
     }
 
-    private Node insertBST(Node curr, Node add, boolean isVertical) {
+    private Node insertBST(Node curr, Node add, Node parent, boolean isVertical, boolean isLess) {
         if (curr == null) {
-            return add;
-        }
-        if (isVertical) {
-            if (curr.pt.x() < add.pt.x()) {
-                curr.lessNode = insertBST(curr.lessNode, add, false);
+            // Step 3
+            // set up RectHV for each node
+            if (isVertical) {
+                if (isLess) { // on bottom
+                    add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.rect.xmax(), parent.pt.y());
+                } else { // on top
+                    add.rect = new RectHV(parent.rect.xmin(), parent.pt.y(), parent.rect.xmax(), parent.rect.xmax());
+                }
             }
             else {
-                curr.greaterNode = insertBST(curr.greaterNode, add, false);
+                if (isLess) { // on left
+                    add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.pt.x(), parent.rect.ymax());
+                } else { // on right
+                    add.rect = new RectHV(parent.pt.x(), parent.rect.ymin(), parent.rect.xmax(), parent.rect.ymax());
+                }
+            }
+            return add;
+        }
+
+        if (isVertical) {
+            if (curr.pt.x() < add.pt.x()) {
+                curr.lessNode = insertBST(curr.lessNode, add, curr, false, true);
+            }
+            else {
+                curr.greaterNode = insertBST(curr.greaterNode, add, curr, false, false);
             }
         }
         else {
             if (curr.pt.y() < add.pt.y()) {
-                curr.lessNode = insertBST(curr.lessNode, add, true);
+                curr.lessNode = insertBST(curr.lessNode, add, curr, true, true);
             }
             else {
-                curr.greaterNode = insertBST(curr.greaterNode, add, true);
+                curr.greaterNode = insertBST(curr.greaterNode, add, curr, true, false);
             }
         }
         return curr;
@@ -81,6 +99,9 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         // best implemented by using private helper methods similar to BST.java
         Node checkNode = new Node();
         checkNode.pt = p;
+        if (root == null) {
+            return false;
+        }
         return containsBST(root, checkNode, true);
     }
 
@@ -94,16 +115,20 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             if (curr.pt.x() < add.pt.x()) {
                 inLeft = containsBST(curr.lessNode, add, false);
             }
-            else {
+            else if (curr.pt.x() > add.pt.x()) {
                 inRight = containsBST(curr.greaterNode, add, false);
+            } else {
+                return true;
             }
         }
         else {
             if (curr.pt.y() < add.pt.y()) {
                 inLeft = containsBST(curr.lessNode, add, true);
             }
-            else {
+            else if (curr.pt.y() < add.pt.y()) {
                 inRight = containsBST(curr.greaterNode, add, true);
+            } else {
+                return true;
             }
         }
         return inLeft || inRight;
