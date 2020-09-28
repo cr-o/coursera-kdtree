@@ -196,6 +196,10 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (p == null) {
             throw new IllegalArgumentException("Argument can not be null");
         }
+        return findNearest(root, p, new Point2D(Double.MAX_VALUE, Double.MAX_VALUE), true);
+    }
+
+    private Point2D findNearest(Node currNode, Point2D searchPoint, Point2D closestSeen, boolean isVertical) {
         // To find a closest point to a given query point,
         // start at the root and recursively search in both subtrees using the following pruning rule:
         // if the closest point discovered so far is closer
