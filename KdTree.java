@@ -2,6 +2,8 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.LinkedList;
+
 public class KdTree { // set of points in unit square, implemented using 2d-tree; a generalization of a BST to two-dimensional keys
     private static class Node {
         private Point2D pt;
@@ -185,11 +187,16 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (rect == null) {
             throw new IllegalArgumentException("Argument can not be null");
         }
-        // To find all points contained in a given query rectangle,
-        // start at the root and recursively search for points in both subtrees using the following pruning rule:
-        // if the query rectangle does not intersect the rectangle corresponding to a node,
-        // there is no need to explore that node (or its subtrees).
-        // A subtree is searched only if it might contain a point contained in the query rectangle.
+        return findRange(root, rect, new LinkedList<>());
+    }
+
+    private LinkedList<Point2D> findRange(Node currNode, RectHV searchRect, LinkedList<Point2D> list) {
+        if (currNode != null && currNode.rect.intersects(searchRect)) {
+            list.add(currNode.pt);
+            list = findRange(currNode.lessNode, searchRect, list);
+            list = findRange(currNode.greaterNode, searchRect, list);
+        }
+        return list;
     }
 
     public Point2D nearest(Point2D p) { // a nearest neighbor in the set to point p; null if the set is empty
