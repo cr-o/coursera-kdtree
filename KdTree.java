@@ -196,21 +196,78 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (p == null) {
             throw new IllegalArgumentException("Argument can not be null");
         }
-        return findNearest(root, p, new Point2D(Double.MAX_VALUE, Double.MAX_VALUE), true);
+        return findNearest(root, p, new Point2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, true);
     }
 
-    private Point2D findNearest(Node currNode, Point2D searchPoint, Point2D closestSeen, boolean isVertical) {
-        // To find a closest point to a given query point,
-        // start at the root and recursively search in both subtrees using the following pruning rule:
-        // if the closest point discovered so far is closer
-        // than the distance between the query point and the rectangle corresponding to a node,
-        // there is no need to explore that node (or its subtrees).
-        // That is, search a node only only if it might contain a point that is closer than the best one found so far.
-        // The effectiveness of the pruning rule depends on quickly finding a nearby point.
-        // To do this, organize the recursive method so that when there are two possible subtrees to go down,
-        // you always choose the subtree that is on the same side of the splitting line
-        // as the query point as the first subtree to explore—
-        // the closest point found while exploring the first subtree may enable pruning of the second subtree
+    private Point2D findNearest(Node currNode, Point2D searchPoint, Point2D closestPoint, double closestSeen, boolean isVertical) {
+        double currDistance = currNode.pt.distanceSquaredTo((searchPoint));
+        if (currDistance < closestSeen) {
+            closestSeen = currDistance;
+            closestPoint = currNode.pt;
+        }
+        if (isVertical) {
+            // if search point is left side
+            // check if left point (if not null) can contain closer first
+            // check if right point (if not null) can contain closer after if left check's point is not closer
+            if (searchPoint.x() <= currNode.pt.x()) {
+                if (currNode.lessNode != null) {
+                    Point2D containsPt = new Point2D(currNode.lessNode.pt.x(), searchPoint.y()); // draw horizontal line from search point and see if it falls different sided point's rectangle
+                    if (currNode.lessNode.rect.contains(containsPt)) {
+                        Point2D updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, false);
+                        if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
+                            return updatedCheck; // nearest point will be this if closer
+                        }
+                    }
+                }
+                if (currNode.greaterNode != null) { // and if closestSeen wasn't updated
+                    Point2D containsPt = new Point2D(currNode.greaterNode.pt.x(), searchPoint.y()); // draw horizontal line from search point and see if it falls different sided point's rectangle
+                    if (currNode.greaterNode.rect.contains(containsPt)) {
+                        Point2D updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, false);
+                        if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
+                            return updatedCheck; // nearest point will be this if closer
+                        }
+                    }
+                }
+            }
+            // else search point is right side
+            // check if right point (if not null) can contain closer first
+            // check if left point (if not null) can contain closer after
+            else {
+                if (currNode.greaterNode != null) { // and if closestSeen wasn't updated
+                    Point2D containsPt = new Point2D(currNode.greaterNode.pt.x(), searchPoint.y()); // draw horizontal line from search point and see if it falls different sided point's rectangle
+                    if (currNode.greaterNode.rect.contains(containsPt)) {
+                        Point2D updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, false);
+                        if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
+                            return updatedCheck; // nearest point will be this if closer
+                        }
+                    }
+                }
+                if (currNode.lessNode != null) {
+                    Point2D containsPt = new Point2D(currNode.lessNode.pt.x(), searchPoint.y()); // draw horizontal line from search point and see if it falls different sided point's rectangle
+                    if (currNode.lessNode.rect.contains(containsPt)) {
+                        Point2D updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, false);
+                        if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
+                            return updatedCheck; // nearest point will be this if closer
+                        }
+                    }
+                }
+
+            }
+        } else {
+            // if search point is bottom side
+            // check if bottom point (if not null) can contain closer first
+            // check if top point (if not null) can contain closer after
+            if (searchPoint.y() <= currNode.pt.y()) { // draw horizontal line from search point and see if it falls different sided point's rectangle
+
+            }
+            // else search point is top side
+            // check if top point (if not null) can contain closer first
+            // check if bottom point (if not null) can contain closer after
+            else {
+
+            }
+        }
+        return closestPoint;
     }
 
     public static void main(String[] args) { // unit testing of the methods (optional)
