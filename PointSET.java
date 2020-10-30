@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
 
 public class PointSET { // set of points in unit square, implemented using red-black BST
-    private SET<Point2D> points;
+    private final SET<Point2D> points;
 
     public PointSET() { // construct an empty set of points
         points = new SET<Point2D>();

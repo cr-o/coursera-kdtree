@@ -13,7 +13,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     private int treeSize = 0;
-    private Node root;
+    private final Node root;
 
     public KdTree() { // construct an empty set of points
         root = new Node();
@@ -77,7 +77,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         }
 
         if (isVertical) {
-            if (curr.pt.x() < add.pt.x()) {
+            if (add.pt.x() < curr.pt.x()) {
                 curr.lessNode = insertBST(curr.lessNode, add, curr, false, true);
             }
             else {
@@ -85,7 +85,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             }
         }
         else {
-            if (curr.pt.y() < add.pt.y()) {
+            if (add.pt.y() < curr.pt.y()) {
                 curr.lessNode = insertBST(curr.lessNode, add, curr, true, true);
             }
             else {
@@ -104,7 +104,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         // best implemented by using private helper methods similar to BST.java
         Node checkNode = new Node();
         checkNode.pt = p;
-        if (root == null) {
+        if (root.pt == null) {
             return false;
         }
         return containsBST(root, checkNode, true);
@@ -145,7 +145,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         draw(root, true);
     }
 
-    public Node draw(Node currNode, boolean isVertical) {
+    private Node draw(Node currNode, boolean isVertical) {
         // Step 4
         // test rectangles
         if (currNode == null) {
@@ -191,7 +191,10 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     private LinkedList<Point2D> findRange(Node currNode, RectHV searchRect, LinkedList<Point2D> list) {
-        if (currNode != null && currNode.rect.intersects(searchRect)) {
+        if (currNode == null || currNode.rect == null) {
+            throw new IllegalArgumentException("Argument can not be null");
+        }
+        if (currNode.rect.intersects(searchRect)) {
             list.add(currNode.pt);
             list = findRange(currNode.lessNode, searchRect, list);
             list = findRange(currNode.greaterNode, searchRect, list);
