@@ -48,48 +48,42 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         else {
             Node newNode = new Node();
             newNode.pt = p;
-            insertBST(root, newNode, null, true, false);
+            newNode.rect = null;
+            insertBST(root, newNode, true);
         }
         treeSize += 1;
     }
 
-    private Node insertBST(Node curr, Node add, Node parent, boolean isVertical, boolean isLess) {
+    private Node insertBST(Node curr, Node add, boolean isVertical) {
         if (curr == null) {
-            // Step 3
-            // set up RectHV for each node
-            if (isVertical) {
-                if (isLess) { // on bottom
-                    add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.rect.xmax(), parent.pt.y());
-                }
-                else { // on top
-                    add.rect = new RectHV(parent.rect.xmin(), parent.pt.y(), parent.rect.xmax(), parent.rect.xmax());
-                }
-            }
-            else {
-                if (isLess) { // on left
-                    add.rect = new RectHV(parent.rect.xmin(), parent.rect.ymin(), parent.pt.x(), parent.rect.ymax());
-                }
-                else { // on right
-                    add.rect = new RectHV(parent.pt.x(), parent.rect.ymin(), parent.rect.xmax(), parent.rect.ymax());
-                }
-            }
             return add;
         }
-
         if (isVertical) {
             if (add.pt.x() < curr.pt.x()) {
-                curr.lessNode = insertBST(curr.lessNode, add, curr, false, true);
+                curr.lessNode = insertBST(curr.lessNode, add, false);
+                if (curr.lessNode.rect == null) {
+                    curr.lessNode.rect = new RectHV(curr.rect.xmin(),curr.rect.ymin(), curr.pt.x(), curr.rect.ymax());
+                }
             }
             else {
-                curr.greaterNode = insertBST(curr.greaterNode, add, curr, false, false);
+                curr.greaterNode = insertBST(curr.greaterNode, add, false);
+                if (curr.greaterNode.rect == null) {
+                    curr.greaterNode.rect = new RectHV(curr.pt.x(),curr.rect.ymin(),curr.rect.xmax(),curr.rect.ymax());
+                }
             }
         }
         else {
             if (add.pt.y() < curr.pt.y()) {
-                curr.lessNode = insertBST(curr.lessNode, add, curr, true, true);
+                curr.lessNode = insertBST(curr.lessNode, add, true);
+                if (curr.lessNode.rect == null) {
+                    curr.lessNode.rect = new RectHV(curr.rect.xmin(),curr.rect.ymin(),curr.rect.xmax(),curr.pt.y());
+                }
             }
             else {
-                curr.greaterNode = insertBST(curr.greaterNode, add, curr, true, false);
+                curr.greaterNode = insertBST(curr.greaterNode, add, true);
+                if (curr.greaterNode.rect == null) {
+                    curr.greaterNode.rect = new RectHV(curr.rect.xmin(),curr.pt.y(),curr.rect.xmax(),curr.rect.ymax());
+                }
             }
         }
         return curr;
