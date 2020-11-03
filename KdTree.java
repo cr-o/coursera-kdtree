@@ -168,10 +168,10 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             Point2D end = new Point2D(currNode.rect.xmax(), currNode.pt.y());
             start.drawTo(end);
             if (currNode.lessNode != null) {
-                currNode.lessNode = draw(currNode.lessNode, false);
+                currNode.lessNode = draw(currNode.lessNode, true);
             }
             if (currNode.greaterNode != null) {
-                currNode.greaterNode = draw(currNode.greaterNode, false);
+                currNode.greaterNode = draw(currNode.greaterNode, true);
             }
         }
         return currNode;
