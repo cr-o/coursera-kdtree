@@ -114,22 +114,16 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             if (curr.pt.x() < add.pt.x()) {
                 inLeft = containsBST(curr.lessNode, add, false);
             }
-            else if (curr.pt.x() > add.pt.x()) {
-                inRight = containsBST(curr.greaterNode, add, false);
-            }
             else {
-                return true;
+                inRight = containsBST(curr.greaterNode, add, false);
             }
         }
         else {
             if (curr.pt.y() < add.pt.y()) {
                 inLeft = containsBST(curr.lessNode, add, true);
             }
-            else if (curr.pt.y() < add.pt.y()) {
-                inRight = containsBST(curr.greaterNode, add, true);
-            }
             else {
-                return true;
+                inRight = containsBST(curr.greaterNode, add, true);
             }
         }
         return inLeft || inRight;
@@ -139,12 +133,12 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         draw(root, true);
     }
 
-    private Node draw(Node currNode, boolean isVertical) {
-        // Step 4
-        // test rectangles
-        if (currNode == null) {
-            throw new IllegalArgumentException("Current node cannot be null");
+    private void draw(Node currNode, boolean isVertical) {
+        //DF Traversal (inorder)
+        if(currNode == null){
+            return;
         }
+        draw(currNode.lessNode, !isVertical);
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setPenRadius(0.01);
         currNode.pt.draw();
@@ -154,12 +148,6 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             Point2D start = new Point2D(currNode.pt.x(), currNode.rect.ymin());
             Point2D end = new Point2D(currNode.pt.x(), currNode.rect.ymax());
             start.drawTo(end);
-            if (currNode.lessNode != null) {
-                currNode.lessNode = draw(currNode.lessNode, false);
-            }
-            if (currNode.greaterNode != null) {
-                currNode.greaterNode = draw(currNode.greaterNode, false);
-            }
         }
         else {
             StdDraw.setPenColor(StdDraw.BLUE);
@@ -167,14 +155,8 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             Point2D start = new Point2D(currNode.rect.xmin(), currNode.pt.y());
             Point2D end = new Point2D(currNode.rect.xmax(), currNode.pt.y());
             start.drawTo(end);
-            if (currNode.lessNode != null) {
-                currNode.lessNode = draw(currNode.lessNode, true);
-            }
-            if (currNode.greaterNode != null) {
-                currNode.greaterNode = draw(currNode.greaterNode, true);
-            }
         }
-        return currNode;
+        draw(currNode.greaterNode, !isVertical);
     }
 
     public Iterable<Point2D> range(RectHV rect) { // all points that are inside the rectangle (or on the boundary)
