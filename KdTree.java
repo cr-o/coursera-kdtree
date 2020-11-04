@@ -62,13 +62,13 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             if (add.pt.x() < curr.pt.x()) {
                 curr.lessNode = insertBST(curr.lessNode, add, false);
                 if (curr.lessNode.rect == null) {
-                    curr.lessNode.rect = new RectHV(curr.rect.xmin(),curr.rect.ymin(), curr.pt.x(), curr.rect.ymax());
+                    curr.lessNode.rect = new RectHV(curr.rect.xmin(), curr.rect.ymin(), curr.pt.x(), curr.rect.ymax());
                 }
             }
             else {
                 curr.greaterNode = insertBST(curr.greaterNode, add, false);
                 if (curr.greaterNode.rect == null) {
-                    curr.greaterNode.rect = new RectHV(curr.pt.x(),curr.rect.ymin(),curr.rect.xmax(),curr.rect.ymax());
+                    curr.greaterNode.rect = new RectHV(curr.pt.x(), curr.rect.ymin(), curr.rect.xmax(), curr.rect.ymax());
                 }
             }
         }
@@ -76,13 +76,13 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             if (add.pt.y() < curr.pt.y()) {
                 curr.lessNode = insertBST(curr.lessNode, add, true);
                 if (curr.lessNode.rect == null) {
-                    curr.lessNode.rect = new RectHV(curr.rect.xmin(),curr.rect.ymin(),curr.rect.xmax(),curr.pt.y());
+                    curr.lessNode.rect = new RectHV(curr.rect.xmin(), curr.rect.ymin(), curr.rect.xmax(), curr.pt.y());
                 }
             }
             else {
                 curr.greaterNode = insertBST(curr.greaterNode, add, true);
                 if (curr.greaterNode.rect == null) {
-                    curr.greaterNode.rect = new RectHV(curr.rect.xmin(),curr.pt.y(),curr.rect.xmax(),curr.rect.ymax());
+                    curr.greaterNode.rect = new RectHV(curr.rect.xmin(), curr.pt.y(), curr.rect.xmax(), curr.rect.ymax());
                 }
             }
         }
@@ -134,8 +134,8 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     private void draw(Node currNode, boolean isVertical) {
-        //DF Traversal (inorder)
-        if(currNode == null){
+        // DF Traversal (inorder)
+        if (currNode == null) {
             return;
         }
         draw(currNode.lessNode, !isVertical);
