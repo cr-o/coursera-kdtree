@@ -194,7 +194,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (currNode == null) {
             return closestPoint;
         }
-        double currDistance = currNode.rect.distanceSquaredTo((searchPoint));
+        double currDistance = currNode.pt.distanceSquaredTo((searchPoint));
         double searchCoordinate = 0.0;
         double currentCoordinate = 0.0;
         if (currDistance < closestSeen) {
@@ -212,14 +212,14 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (searchCoordinate <= currentCoordinate) {
             Point2D updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, !isVertical);
             double leftCheck = updatedCheck.distanceSquaredTo(searchPoint);
-            if (leftCheck <= closestSeen) {
+            if (leftCheck < closestSeen) {
                 closestPoint = updatedCheck;
                 closestSeen = leftCheck;
             }
-            if(currNode.greaterNode != null && currNode.greaterNode.rect.distanceSquaredTo(searchPoint) <=  closestSeen){
+            if(currNode.greaterNode != null && currNode.greaterNode.rect.distanceSquaredTo(searchPoint) < closestSeen){
                 updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, !isVertical);
                 double rightCheck = updatedCheck.distanceSquaredTo(searchPoint);
-                if (rightCheck <= closestSeen) {
+                if (rightCheck < closestSeen) {
                     closestPoint = updatedCheck;
                 }
             }
@@ -231,10 +231,10 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
                 closestPoint = updatedCheck;
                 closestSeen = rightCheck;
             }
-            if(currNode.lessNode != null && currNode.lessNode.rect.distanceSquaredTo(searchPoint) <=  closestSeen){
+            if(currNode.lessNode != null && currNode.lessNode.rect.distanceSquaredTo(searchPoint) < closestSeen){
                 updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, !isVertical);
                 double leftCheck = updatedCheck.distanceSquaredTo(searchPoint);
-                if (leftCheck <= closestSeen) {
+                if (leftCheck < closestSeen) {
                     closestPoint = updatedCheck;
                 }
             }
