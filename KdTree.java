@@ -194,6 +194,9 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (currNode == null) {
             return closestPoint;
         }
+        if (currNode.pt == null) {
+            return null;
+        }
         double currDistance = currNode.pt.distanceSquaredTo((searchPoint));
         double searchCoordinate = 0.0;
         double currentCoordinate = 0.0;
@@ -266,6 +269,5 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         testPointTree.insert(new Point2D(0.0, 0.625));
         Point2D nearestPoint = testPointTree.nearest(new Point2D(0.375, 0.75));
         System.out.printf("%f, %f", nearestPoint.x(), nearestPoint.y());
-
     }
 }
