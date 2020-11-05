@@ -60,12 +60,12 @@ public class PointSET { // set of points in unit square, implemented using red-b
         if (points.size() == 0) { // null if the set is empty
             return null;
         }
-        double minDistance = 1.0;
+        double minDistance = Math.sqrt(2);
         double distanceBetween;
         Point2D nearestPoint = null;
         for (Point2D point : points) {
             distanceBetween = point.distanceSquaredTo(p);
-            if (distanceBetween < minDistance) {
+            if (distanceBetween <= minDistance) {
                 nearestPoint = point;
                 minDistance = distanceBetween;
             }

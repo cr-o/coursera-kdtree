@@ -108,10 +108,13 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (curr == null) {
             return false;
         }
+        if(curr.pt.x() == add.pt.x() && curr.pt.y() == add.pt.y()){
+            return true;
+        }
         boolean inLeft = false;
         boolean inRight = false;
         if (isVertical) {
-            if (curr.pt.x() < add.pt.x()) {
+            if (add.pt.x() < curr.pt.x()) {
                 inLeft = containsBST(curr.lessNode, add, false);
             }
             else {
@@ -119,7 +122,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
             }
         }
         else {
-            if (curr.pt.y() < add.pt.y()) {
+            if (add.pt.y() < curr.pt.y()) {
                 inLeft = containsBST(curr.lessNode, add, true);
             }
             else {
