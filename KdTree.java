@@ -18,6 +18,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     public KdTree() { // construct an empty set of points
         root = new Node();
         root.pt = null;
+        root.rect = new RectHV(0.0, 0.0, 1.0, 1.0);
     }
 
     public boolean isEmpty() { // is the set empty?
@@ -43,7 +44,6 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         }
         if (root.pt == null) {
             root.pt = p;
-            root.rect = new RectHV(0.0, 0.0, 1.0, 1.0);
         }
         else {
             Node newNode = new Node();
@@ -108,7 +108,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (curr == null) {
             return false;
         }
-        if(curr.pt.x() == add.pt.x() && curr.pt.y() == add.pt.y()){
+        if (curr.pt.x() == add.pt.x() && curr.pt.y() == add.pt.y()) {
             return true;
         }
         boolean inLeft = false;
@@ -170,11 +170,13 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     private LinkedList<Point2D> findRange(Node currNode, RectHV searchRect, LinkedList<Point2D> list) {
-        if (currNode == null || currNode.rect == null) {
-            throw new IllegalArgumentException("Argument can not be null");
+        if (currNode == null) {
+            return list;
         }
-        if (currNode.rect.intersects(searchRect)) {
-            list.add(currNode.pt);
+        if (searchRect.intersects(currNode.rect)) {
+            if (searchRect.contains(currNode.pt)) {
+                list.add(currNode.pt);
+            }
             list = findRange(currNode.lessNode, searchRect, list);
             list = findRange(currNode.greaterNode, searchRect, list);
         }
