@@ -170,7 +170,7 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
     }
 
     private LinkedList<Point2D> findRange(Node currNode, RectHV searchRect, LinkedList<Point2D> list) {
-        if (currNode == null) {
+        if (currNode == null || currNode.pt == null) {
             return list;
         }
         if (searchRect.intersects(currNode.rect)) {
@@ -187,14 +187,14 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         if (p == null) {
             throw new IllegalArgumentException("Argument can not be null");
         }
-        return findNearest(root, p, new Point2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, true);
+        return findNearest(root, p, new Point2D(Double.MAX_VALUE, Double.MAX_VALUE), Double.MAX_VALUE, true);
     }
 
     private Point2D findNearest(Node currNode, Point2D searchPoint, Point2D closestPoint, double closestSeen, boolean isVertical) {
         if (currNode == null) {
             return closestPoint;
         }
-        double currDistance = currNode.pt.distanceSquaredTo((searchPoint));
+        double currDistance = currNode.rect.distanceSquaredTo((searchPoint));
         double searchCoordinate = 0.0;
         double currentCoordinate = 0.0;
         if (currDistance < closestSeen) {
@@ -211,22 +211,32 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
         }
         if (searchCoordinate <= currentCoordinate) {
             Point2D updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, !isVertical);
-            if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
-                return updatedCheck;
+            double leftCheck = updatedCheck.distanceSquaredTo(searchPoint);
+            if (leftCheck <= closestSeen) {
+                closestPoint = updatedCheck;
+                closestSeen = leftCheck;
             }
-            updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, !isVertical);
-            if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
-                return updatedCheck;
+            if(currNode.greaterNode != null && currNode.greaterNode.rect.distanceSquaredTo(searchPoint) <=  closestSeen){
+                updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, !isVertical);
+                double rightCheck = updatedCheck.distanceSquaredTo(searchPoint);
+                if (rightCheck <= closestSeen) {
+                    closestPoint = updatedCheck;
+                }
             }
         }
         else {
             Point2D updatedCheck = findNearest(currNode.greaterNode, searchPoint, closestPoint, closestSeen, !isVertical);
-            if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
-                return updatedCheck;
+            double rightCheck = updatedCheck.distanceSquaredTo(searchPoint);
+            if (rightCheck <= closestSeen) {
+                closestPoint = updatedCheck;
+                closestSeen = rightCheck;
             }
-            updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, !isVertical);
-            if (updatedCheck.distanceSquaredTo(searchPoint) < closestSeen) {
-                return updatedCheck;
+            if(currNode.lessNode != null && currNode.lessNode.rect.distanceSquaredTo(searchPoint) <=  closestSeen){
+                updatedCheck = findNearest(currNode.lessNode, searchPoint, closestPoint, closestSeen, !isVertical);
+                double leftCheck = updatedCheck.distanceSquaredTo(searchPoint);
+                if (leftCheck <= closestSeen) {
+                    closestPoint = updatedCheck;
+                }
             }
         }
         return closestPoint;
@@ -238,5 +248,24 @@ public class KdTree { // set of points in unit square, implemented using 2d-tree
          * KdTreeVisualizer
          * NearestNeighborVisualizer
          */
+        KdTree testPointTree = new KdTree();
+        testPointTree.insert(new Point2D(1.0, 0.75));
+        testPointTree.insert(new Point2D(0.75, 0.0));
+        testPointTree.insert(new Point2D(0.375, 0.12));
+        testPointTree.insert(new Point2D(0.375, 0.0));
+        testPointTree.insert(new Point2D(0.75, 0.125));
+        testPointTree.insert(new Point2D(1.0, 0.875));
+        testPointTree.insert(new Point2D(0.0, 0.125));
+        testPointTree.insert(new Point2D(0.25, 0.625));
+        testPointTree.insert(new Point2D(0.25, 1.0));
+        testPointTree.insert(new Point2D(0.5, 0.75));
+        testPointTree.insert(new Point2D(0.0, 1.0));
+        testPointTree.insert(new Point2D(0.375, 0.87));
+        testPointTree.insert(new Point2D(0.0, 0.5));
+        testPointTree.insert(new Point2D(0.25, 0.875));
+        testPointTree.insert(new Point2D(0.0, 0.625));
+        Point2D nearestPoint = testPointTree.nearest(new Point2D(0.375, 0.75));
+        System.out.printf("%f, %f", nearestPoint.x(), nearestPoint.y());
+
     }
 }
